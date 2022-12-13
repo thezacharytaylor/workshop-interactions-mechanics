@@ -1,11 +1,15 @@
-import React from "react"
+import React from 'react';
 
-import "./styles/skip-links.scss"
+import './styles/skip-links.scss';
 
-const SkipLinks = ({}) => {
-    return (
-        <></>
-    )
-}
+const SkipLinks = (props) => {
+  return (
+    <>
+      <a href={props.target} className="screen-reader-only">
+        {props.text}
+      </a>
+    </>
+  );
+};
 
-export default SkipLinks
+export default SkipLinks;
