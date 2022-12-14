@@ -140,10 +140,14 @@ const DatePicker = ({ numMonthsAheadToStart = 2 }) => {
     } else if (event.key === 'ArrowDown') {
       if (currentIndex + 7 <= datesArray.length - 1) {
         focusDayByIndex(currentIndex + 7);
+      } else {
+        focusDayByIndex(datesArray.length - 1);
       }
     } else if (event.key === 'ArrowUp') {
       if (currentIndex - 7 > 0) {
         focusDayByIndex(currentIndex - 7);
+      } else {
+        focusDayByIndex(0);
       }
     }
   };
