@@ -122,6 +122,15 @@ const DatePicker = ({ numMonthsAheadToStart = 2 }) => {
   const [focusedDate, setFocusedDate] = useState(firstFocusedItemDate);
   const buttonRefs = useRef([]);
 
+  const handleKeyDown = (event) => {
+    switch (event.key) {
+      case 'ArrowUp':
+      case 'ArrowDown':
+        event.preventDefault();
+        break;
+    }
+  };
+
   const handleKeyUp = (event) => {
     let currentIndex = datesArray.indexOf(event.target.dataset.date);
 
@@ -246,6 +255,7 @@ const DatePicker = ({ numMonthsAheadToStart = 2 }) => {
                       .trim()}
                     data-date={day.date}
                     onClick={() => selectDay(day)}
+                    onKeyDown={(event) => handleKeyDown(event)}
                     onKeyUp={(event) => handleKeyUp(event)}
                     ref={(elementRef) => {
                       buttonRefs.current.push(elementRef);
