@@ -6,6 +6,7 @@ import HeaderPortal from 'components/header-portal';
 import 'components/styles/page-submit-listing.scss';
 
 const SubmitListingPage = () => {
+  const inputRefs = useRef([]);
   let [isFormSubmitted, setIsFormSubmitted] = useState(false);
   let [isFormDirty, setIsFormDirty] = useState(false);
   let [errorAnnouncement, setErrorAnnouncement] = useState(false);
@@ -22,22 +23,43 @@ const SubmitListingPage = () => {
   const submitHandler = (event) => {
     event.preventDefault();
     setIsFormSubmitted(true);
-    console.log(formState.legalToCamp);
 
     setErrorAnnouncement('Required fields cannot be empty.');
+    setFocusFirstInvalid();
+  };
+
+  const setFocusFirstInvalid = () => {
+    inputRefs.current.every((ref) => {
+      let formField = ref.id;
+
+      if (formField !== 'fee' && formField !== 'ownership' && formState[formField].length === 0) {
+        ref.focus();
+        return false;
+      } else {
+        if (formField === 'ownership' && formState.legalToCamp === false) {
+          ref.focus();
+          return false;
+        } else if (formField === 'fee' && formState[formField] === 0) {
+          ref.focus();
+          return false;
+        }
+      }
+
+      return true;
+    });
   };
 
   const changeHandler = (event) => {
     const changeTarget = event.target;
-    const changeValue = target.type === 'checkbox' ? changeTarget.checked : changeTarget.value;
-    const id = target.id;
+    const changeValue = changeTarget.type === 'checkbox' ? changeTarget.checked : changeTarget.value;
+    const id = changeTarget.id;
 
     setIsFormDirty(true);
     setFormState((prevState) => {
       return {
         ...prevState,
         ...{
-          [id]: value,
+          [id]: changeValue,
         },
       };
     });
@@ -82,6 +104,9 @@ const SubmitListingPage = () => {
                       type="text"
                       id="submittername"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                   <div className="form-field">
@@ -95,8 +120,11 @@ const SubmitListingPage = () => {
                       aria-invalid={isFormSubmitted && formState.email.length === 0 ? 'true' : null}
                       type="email"
                       id="email"
-                      pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
+                      //   pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                 </div>
@@ -113,6 +141,9 @@ const SubmitListingPage = () => {
                       type="text"
                       id="sitename"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                   <div className="form-field">
@@ -127,6 +158,9 @@ const SubmitListingPage = () => {
                       type="text"
                       id="location"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                 </div>
@@ -139,6 +173,9 @@ const SubmitListingPage = () => {
                       id="fee"
                       placeholder="$"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                   <div className="form-field">
@@ -155,6 +192,9 @@ const SubmitListingPage = () => {
                       name="ownership"
                       value="Owned"
                       onChange={(event) => changeHandler(event)}
+                      ref={(elementRef) => {
+                        inputRefs.current.push(elementRef);
+                      }}
                     />
                   </div>
                 </div>
@@ -163,6 +203,10 @@ const SubmitListingPage = () => {
                   <textarea
                     aria-invalid={isFormSubmitted && formState.notes.length === 0 ? 'true' : null}
                     id="notes"
+                    onChange={(event) => changeHandler(event)}
+                    ref={(elementRef) => {
+                      inputRefs.current.push(elementRef);
+                    }}
                   ></textarea>
                 </div>
                 <p id="key" className="asterisk">
