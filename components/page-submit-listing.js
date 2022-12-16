@@ -23,30 +23,49 @@ const SubmitListingPage = () => {
   const submitHandler = (event) => {
     event.preventDefault();
     setIsFormSubmitted(true);
-
-    setErrorAnnouncement('Required fields cannot be empty.');
-    setFocusFirstInvalid();
+    checkInvalid(event);
   };
 
-  const setFocusFirstInvalid = () => {
-    inputRefs.current.every((ref) => {
-      let formField = ref.id;
+  const checkInvalid = (event) => {
+    // my method
+    // Still used setErrorAnnouncement('Required fields cannot be empty.'); in the submitHandler function
+    // inputRefs.current.every((ref) => {
+    //   let formField = ref.id;
+    //   if (formField !== 'fee' && formField !== 'ownership' && formState[formField].length === 0) {
+    //     ref.focus();
+    //     return false;
+    //   }
+    //   return true;
+    // });
 
-      if (formField !== 'fee' && formField !== 'ownership' && formState[formField].length === 0) {
-        ref.focus();
-        return false;
-      } else {
-        if (formField === 'ownership' && formState.legalToCamp === false) {
-          ref.focus();
-          return false;
-        } else if (formField === 'fee' && formState[formField] === 0) {
-          ref.focus();
-          return false;
-        }
+    // Marcy's solution
+    let firstEmptyElementIndex = null;
+    const formElements = Array.from(event.target.elements);
+    formElements.map((element, index) => {
+      switch (element.type) {
+        // ignore the submit button
+        case 'submit':
+          return;
+          break;
+
+        default:
+          // set form state for aria-invalid
+          setIsFormDirty(false);
+
+          if (element.value.trim().length === 0) {
+            // focus on first empty input when submitted
+            if (firstEmptyElementIndex === null) {
+              firstEmptyElementIndex = index;
+              inputRefs.current[index].focus();
+            }
+            setErrorAnnouncement('Required fields cannot be empty.');
+          }
+          break;
       }
-
-      return true;
     });
+
+    // thoughts: mine is more compact, but hers is more complete.
+    // Hers accounts the submission and setErrorAnnouncement.
   };
 
   const changeHandler = (event) => {
@@ -168,7 +187,6 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="fee">Nightly fee</label>
                     <input
-                      aria-invalid={isFormSubmitted && formState.fee === 0 ? 'true' : null}
                       type="number"
                       id="fee"
                       placeholder="$"
@@ -186,7 +204,6 @@ const SubmitListingPage = () => {
                       </span>
                     </label>
                     <input
-                      aria-invalid={isFormSubmitted && !formState.legalToCamp ? 'true' : null}
                       type="checkbox"
                       id="ownership"
                       name="ownership"
