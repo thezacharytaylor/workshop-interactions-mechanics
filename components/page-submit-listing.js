@@ -40,7 +40,9 @@ const SubmitListingPage = () => {
 
     // Marcy's solution
     let firstEmptyElementIndex = null;
+    let fieldName = '';
     const formElements = Array.from(event.target.elements);
+    console.log(formElements);
     formElements.map((element, index) => {
       switch (element.type) {
         // ignore the submit button
@@ -52,13 +54,17 @@ const SubmitListingPage = () => {
           // set form state for aria-invalid
           setIsFormDirty(false);
 
+          // test the input length to see if empty
           if (element.value.trim().length === 0) {
             // focus on first empty input when submitted
+            // initial state is null, if false then it cannot reset the index.
+            // thus it stays on the first index it finds.
             if (firstEmptyElementIndex === null) {
               firstEmptyElementIndex = index;
+              fieldName = element.labels[0].textContent.toLowerCase();
               inputRefs.current[index].focus();
             }
-            setErrorAnnouncement('Required fields cannot be empty.');
+            setErrorAnnouncement(`Required fields cannot be empty. Please enter ${fieldName}`);
           }
           break;
       }
@@ -114,14 +120,16 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="submittername">
                       Your name{' '}
-                      <span className="asterisk" abbr="required">
+                      <span className="asterisk" abbr="required" aria-hidden="true">
                         *
                       </span>
                     </label>
                     <input
+                      aria-required="true"
                       aria-invalid={isFormSubmitted && formState.submittername.length === 0 ? 'true' : null}
                       type="text"
                       id="submittername"
+                      data-name="name"
                       onChange={(event) => changeHandler(event)}
                       ref={(elementRef) => {
                         inputRefs.current.push(elementRef);
@@ -131,14 +139,16 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="email">
                       Your email address{' '}
-                      <span className="asterisk" abbr="required">
+                      <span className="asterisk" abbr="required" aria-hidden="true">
                         *
                       </span>
                     </label>
                     <input
+                      aria-required="true"
                       aria-invalid={isFormSubmitted && formState.email.length === 0 ? 'true' : null}
                       type="email"
                       id="email"
+                      data-name="email"
                       //   pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
                       onChange={(event) => changeHandler(event)}
                       ref={(elementRef) => {
@@ -151,11 +161,12 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="sitename">
                       Site Name{' '}
-                      <span className="asterisk" abbr="required">
+                      <span className="asterisk" abbr="required" aria-hidden="true">
                         *
                       </span>
                     </label>
                     <input
+                      aria-required="true"
                       aria-invalid={isFormSubmitted && formState.sitename.length === 0 ? 'true' : null}
                       type="text"
                       id="sitename"
@@ -168,11 +179,12 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="location">
                       Location{' '}
-                      <span className="asterisk" abbr="required">
+                      <span className="asterisk" abbr="required" aria-hidden="true">
                         *
                       </span>
                     </label>
                     <input
+                      aria-required="true"
                       aria-invalid={isFormSubmitted && formState.location.length === 0 ? 'true' : null}
                       type="text"
                       id="location"
@@ -199,11 +211,12 @@ const SubmitListingPage = () => {
                   <div className="form-field">
                     <label htmlFor="ownership">
                       Can the public legally camp here?{' '}
-                      <span className="asterisk" abbr="required">
+                      <span className="asterisk" abbr="required" aria-hidden="true">
                         *
                       </span>
                     </label>
                     <input
+                      aria-required="true"
                       type="checkbox"
                       id="ownership"
                       name="ownership"
